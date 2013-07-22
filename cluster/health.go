@@ -3,7 +3,7 @@ package cluster
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/meanpath/elastigo/api"
+	"github.com/mattbaird/elastigo/api"
 	"strings"
 )
 

@@ -3,8 +3,8 @@ package core_test
 import (
 	"bytes"
 	"fmt"
-	"github.com/meanpath/elastigo/api"
-	"github.com/meanpath/elastigo/core"
+	"github.com/mattbaird/elastigo/api"
+	"github.com/mattbaird/elastigo/core"
 	"strconv"
 	"time"
 )

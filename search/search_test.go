@@ -2,7 +2,7 @@ package search
 
 import (
 	u "github.com/araddon/gou"
-	"github.com/meanpath/elastigo/core"
+	"github.com/mattbaird/elastigo/core"
 	"log"
 	"testing"
 )

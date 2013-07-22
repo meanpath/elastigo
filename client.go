@@ -18,10 +18,10 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/meanpath/elastigo/api"
-	"github.com/meanpath/elastigo/cluster"
-	"github.com/meanpath/elastigo/core"
-	"github.com/meanpath/elastigo/indices"
+	"github.com/mattbaird/elastigo/api"
+	"github.com/mattbaird/elastigo/cluster"
+	"github.com/mattbaird/elastigo/core"
+	"github.com/mattbaird/elastigo/indices"
 	"log"
 )
 

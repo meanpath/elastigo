@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	u "github.com/araddon/gou"
-	"github.com/meanpath/elastigo/api"
+	"github.com/mattbaird/elastigo/api"
 	"io"
 	"log"
 	"strconv"
