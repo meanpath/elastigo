@@ -48,6 +48,7 @@ func ElasticSearchRequest(method, path string) (*Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("User-Agent", "elasticSearch/"+Version+" ("+runtime.GOOS+"-"+runtime.GOARCH+")")
 	return (*Request)(req), nil

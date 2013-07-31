@@ -15,6 +15,7 @@ func DoCommand(method string, url string, data interface{}) ([]byte, error) {
 	var httpStatusCode int
 	req, err := ElasticSearchRequest(method, url)
 	//log.Println(req.URL)
+
 	if err != nil {
 		return body, err
 	}
@@ -35,6 +36,7 @@ func DoCommand(method string, url string, data interface{}) ([]byte, error) {
 		}
 
 	}
+
 	httpStatusCode, body, err = req.Do(&response)
 
 	if err != nil {
@@ -43,6 +45,7 @@ func DoCommand(method string, url string, data interface{}) ([]byte, error) {
 	if httpStatusCode > 304 {
 
 		jsonErr := json.Unmarshal(body, &response)
+
 		if jsonErr == nil {
 			if error, ok := response["error"]; ok {
 				status, _ := response["status"]

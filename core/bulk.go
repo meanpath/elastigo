@@ -52,7 +52,7 @@ type BulkIndexor struct {
 
 	// We are creating a variable defining the func responsible for sending
 	// to allow a mock sendor for test purposes
-	BulkSendor func(*bytes.Buffer) error
+	BulkSendor func(*bytes.Buffer) ([]byte,error)
 
 	// If we encounter an error in sending, we are going to retry for this long
 	// before returning an error
@@ -61,6 +61,9 @@ type BulkIndexor struct {
 
 	// channel for getting errors
 	ErrorChannel chan *ErrorBuffer
+
+  // percolator channel
+  PercolatorChannel chan *[]byte
 
 	// channel for sending to background indexor
 	bulkChannel chan []byte
@@ -117,6 +120,7 @@ func NewBulkIndexorErrors(maxConns, retrySeconds int) *BulkIndexor {
 	b.RetryForSeconds = retrySeconds
 	b.bulkChannel = make(chan []byte, 100)
 	b.ErrorChannel = make(chan *ErrorBuffer, 20)
+  b.PercolatorChannel = make(chan *[]byte)
 	return &b
 }
 
@@ -156,7 +160,11 @@ func (b *BulkIndexor) startHttpSendor() {
 		go func() {
 			for {
 				buf := <-b.sendBuf
-				err := b.BulkSendor(buf)
+				percolate, err := b.BulkSendor(buf)
+        
+        if b.PercolatorChannel != nil {
+          b.PercolatorChannel <- &percolate
+        }
 
 				// Perhaps a b.FailureStrategy(err)  ??  with different types of strategies
 				//  1.  Retry, then panic
@@ -165,8 +173,11 @@ func (b *BulkIndexor) startHttpSendor() {
 				if err != nil {
 					if b.RetryForSeconds > 0 {
 						time.Sleep(time.Second * time.Duration(b.RetryForSeconds))
-						err = b.BulkSendor(buf)
+						percolate, err = b.BulkSendor(buf)
 						if err == nil {
+              if b.PercolatorChannel != nil {
+                b.PercolatorChannel <- &percolate
+              }
 							continue
 						}
 					}
@@ -244,14 +255,15 @@ func (b *BulkIndexor) Index(index string, _type string, id, ttl string, date *ti
 
 // This does the actual send of a buffer, which has already been formatted
 // into bytes of ES formatted bulk data
-func BulkSend(buf *bytes.Buffer) error {
-	_, err := api.DoCommand("POST", "/_bulk", buf)
+func BulkSend(buf *bytes.Buffer) ([]byte,error) {
+	resp, err := api.DoCommand("POST", "/_bulk?percolate=*", buf)
 	if err != nil {
 		log.Println(err)
 		BulkErrorCt += 1
-		return err
+		return resp,err
 	}
-	return nil
+
+	return resp,nil
 }
 
 // Given a set of arguments for index, type, id, data create a set of bytes that is formatted for bulkd index
@@ -265,6 +277,8 @@ func IndexBulkBytes(index string, _type string, id, ttl string, date *time.Time,
 	buf.WriteString(_type)
 	buf.WriteString(`","_id":"`)
 	buf.WriteString(id)
+	buf.WriteString(`","_percolate":"`)
+	buf.WriteString(`*`)
 	if len(ttl) > 0 {
 		buf.WriteString(`","ttl":"`)
 		buf.WriteString(ttl)
