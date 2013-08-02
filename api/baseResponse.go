@@ -33,6 +33,28 @@ type Explaination struct {
 	Details     []Explaination `json:"details,omitempty"`
 }
 
+type ThreadPoolStatus struct {
+  Threads int   `json:"threads"`
+  Queue int     `json:"queue"`
+  Active int    `json:"active"`
+  Rejected int  `json:"rejected"`
+  Largest int   `json:"largest"`
+  Completed int `json:"completed"`
+}
+
+type NodeStatus struct {
+  Timestamp int                           `json:"timestamp"` 
+  Name string                             `json:"name"` 
+  Address string                          `json:"transport_address"` 
+  Hostname string                         `json:"hostname"` 
+  Threadpool map[string]ThreadPoolStatus  `json:"thread_pool"` 
+}
+
+type ClusterStatus struct {
+  ClusterName string          `json:"cluster_name"` 
+  Nodes map[string]NodeStatus `json:"nodes"`
+}
+
 func Pretty(pretty bool) string {
 	prettyString := ""
 	if pretty == true {

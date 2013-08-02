@@ -57,6 +57,31 @@ func DoCommand(method string, url string, data interface{}) ([]byte, error) {
 	return body, nil
 }
 
+func NodeStats() (ClusterStatus) {
+
+	var response map[string]interface{}
+  var retval ClusterStatus 
+
+  url := fmt.Sprintf("/_cluster/nodes/stats?thread_pool=true&clear=true")
+	req, err := ElasticSearchRequest("GET", url)
+
+  if err != nil {
+    log.Printf("Node stat error: %s\n", err)
+  }
+
+	_, body, err := req.Do(&response)
+
+  if err != nil {
+    log.Printf("Node stat error: %s\n", err)
+  }
+  jsonErr := json.Unmarshal(body, &retval)
+  if jsonErr != nil {
+    log.Printf("Node stat error: %s\n", jsonErr)
+  }
+
+  return retval
+}
+
 // The API also allows to check for the existance of a document using HEAD
 // This appears to be broken in the current version of elasticsearch 0.19.10, currently
 // returning nothing
