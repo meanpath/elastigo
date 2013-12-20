@@ -1,16 +1,18 @@
+
+meanpath fork
+-------------
+
+* Adds support fields when they're requested individually.
+* Fixes RegisterPercolate and Percolate methods for single percolate requests and registration.
+* Fixes the Exists method.
+* Implements Scan support for SearchRequest and SearchUri.
+* Calls percolate on bulk index queries so new indexes can be checked against registered percolates
+* Adds a NodeStats function returning a thread pool status for the ES cluster to enable endpoint selection
+
+Original readme follows.
+
 elastigo
 ========
-
-This fork;
-
-Adds support fields when they're requested individually.
-Fixes RegisterPercolate and Percolate methods for single percolate requests and registration.
-Fixes the Exists method.
-Implements Scan support for SearchRequest and SearchUri.
-Calls percolate on bulk index queries so new indexes can be checked against registered percolates
-Adds a NodeStats function returning a thread pool status for the ES cluster to enable endpoint selection
-
-Original readme follows;
 
 Golang based Elasticsearch client, implements core api for Indexing and searching.   GoDoc http://godoc.org/github.com/mattbaird/elastigo
 
